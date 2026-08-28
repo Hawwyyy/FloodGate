@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "461076814902",
+    "project_id": "floodgate-c7bb3",
+    "storage_bucket": "floodgate-c7bb3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461076814902:android:88b61d61247534f954cc97",
+        "android_client_info": {
+          "package_name": "com.example.floodgate"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqWArzMEDldKWzEkQC64Q17EGtCqxiPas"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
