@@ -184,7 +184,8 @@ internal object OnboardingDesign {
     const val ButtonRadius = 12f
 }
 
-@Preview(widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Regular phone", widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Small phone", widthDp = 320, heightDp = 640, showBackground = true)
 @Composable private fun OnboardingScreenPreview() {
     FloodGateTheme { OnboardingScreen({}) }
 }

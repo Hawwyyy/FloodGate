@@ -1,6 +1,5 @@
 package com.example.floodgate.ui.onboarding
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,9 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.example.floodgate.R
 import com.example.floodgate.ui.dashboard.BarrierCard
@@ -72,36 +73,48 @@ private fun MonitoringStatusPreview(scale: Float, modifier: Modifier = Modifier)
             bodySmall = typography.bodySmall.copy(platformStyle = noFontPadding)
         )
     ) {
-        Box(
-            modifier.requiredSize(
+        Layout(
+            modifier = modifier.requiredSize(
                 (MonitoringPreviewDesign.Width * scale).dp,
                 (MonitoringPreviewDesign.Height * scale).dp
-            )
-        ) {
-            Column(
-                Modifier.requiredSize(
-                    MonitoringPreviewDesign.Width.dp,
-                    MonitoringPreviewDesign.Height.dp
-                )
-                    .graphicsLayer {
+            ),
+            content = {
+                Column(
+                    Modifier.requiredSize(
+                        MonitoringPreviewDesign.Width.dp,
+                        MonitoringPreviewDesign.Height.dp
+                    ).graphicsLayer {
                         scaleX = scale
                         scaleY = scale
                         transformOrigin = TransformOrigin(0f, 0f)
                     }
-            ) {
-                BarrierCard(
-                    Modifier.shadow(
-                        elevation = MonitoringPreviewDesign.ShadowElevation.dp,
-                        shape = RoundedCornerShape(MonitoringPreviewDesign.CardRadius.dp),
-                        clip = false
+                ) {
+                    BarrierCard(
+                        Modifier.shadow(
+                            elevation = MonitoringPreviewDesign.ShadowElevation.dp,
+                            shape = RoundedCornerShape(MonitoringPreviewDesign.CardRadius.dp),
+                            clip = false
+                        )
                     )
-                )
-                Spacer(Modifier.height(MonitoringPreviewDesign.CardGap.dp))
-                Row(Modifier.requiredWidth(MonitoringPreviewDesign.Width.dp)) {
-                    WaterLevelCard(Modifier.width(MonitoringPreviewDesign.WaterCardWidth.dp))
-                    Spacer(Modifier.width(MonitoringPreviewDesign.MetricGap.dp))
-                    SystemStatusCard(Modifier.width(MonitoringPreviewDesign.SystemCardWidth.dp))
+                    Spacer(Modifier.height(MonitoringPreviewDesign.CardGap.dp))
+                    Row(Modifier.requiredWidth(MonitoringPreviewDesign.Width.dp)) {
+                        WaterLevelCard(Modifier.width(MonitoringPreviewDesign.WaterCardWidth.dp))
+                        Spacer(Modifier.width(MonitoringPreviewDesign.MetricGap.dp))
+                        SystemStatusCard(Modifier.width(MonitoringPreviewDesign.SystemCardWidth.dp))
+                    }
                 }
+            }
+        ) { measurables, constraints ->
+            // Measure the Figma-sized content independently from the narrow parent. Placing it
+            // explicitly at (0, 0) avoids Compose's default centering of an oversized child.
+            val preview = measurables.single().measure(
+                Constraints.fixed(
+                    MonitoringPreviewDesign.Width.dp.roundToPx(),
+                    MonitoringPreviewDesign.Height.dp.roundToPx()
+                )
+            )
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                preview.placeRelative(0, 0)
             }
         }
     }
@@ -120,7 +133,8 @@ private object MonitoringPreviewDesign {
     const val ShadowElevation = 4f
 }
 
-@Preview(widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Regular phone", widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Small phone", widthDp = 320, heightDp = 640, showBackground = true)
 @Composable private fun OnboardingMonitoringPreview() {
     FloodGateTheme { OnboardingMonitoringScreen({}, {}) }
 }

@@ -388,27 +388,13 @@ private fun SignUpCard(
 
         Spacer(modifier = Modifier.height(FloodGateSpacing.Sm))
 
-        Row(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            horizontalArrangement = Arrangement.spacedBy(FloodGateSpacing.Xs),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.already_have_account),
-                color = FloodGateNeutralDefault,
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Text(
-                text = stringResource(R.string.sign_in_link),
-                modifier = Modifier.clickable(
-                    enabled = !isLoading,
-                    role = Role.Button,
-                    onClick = onSignInClick
-                ),
-                color = FloodGateLink,
-                style = MaterialTheme.typography.bodyMedium
-            )
-        }
+        AuthAccountPrompt(
+            prompt = R.string.already_have_account,
+            action = R.string.sign_in_link,
+            onActionClick = onSignInClick,
+            enabled = !isLoading,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
         Spacer(modifier = Modifier.height(FloodGateSpacing.Sm))
     }
@@ -434,6 +420,12 @@ private object SignUpDesign {
     name = "Sign Up",
     widthDp = 412,
     heightDp = 917,
+    showBackground = true
+)
+@Preview(
+    name = "Sign Up — small phone",
+    widthDp = 320,
+    heightDp = 640,
     showBackground = true
 )
 @Composable

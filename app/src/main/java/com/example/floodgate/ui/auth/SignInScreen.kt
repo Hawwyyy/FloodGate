@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -212,7 +213,7 @@ fun SignInScreen(
                         text = stringResource(R.string.forgot_password),
                         modifier = Modifier
                             .align(Alignment.End)
-                            .height(SignInDesign.BodyLineHeight)
+                            .heightIn(min = SignInDesign.BodyLineHeight)
                             .clickable(
                                 enabled = !isLoading,
                                 role = Role.Button,
@@ -248,30 +249,16 @@ fun SignInScreen(
                     )
                 }
 
-                Row(
+                AuthAccountPrompt(
+                    prompt = R.string.no_account,
+                    action = R.string.sign_up,
+                    onActionClick = onSignUpClick,
+                    enabled = !isLoading,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .navigationBarsPadding()
-                        .padding(bottom = SignInDesign.AccountPromptBottomSpacing),
-                    horizontalArrangement = Arrangement.spacedBy(FloodGateSpacing.Xs),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.no_account),
-                        color = FloodGateNeutralDefault,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                    Text(
-                        text = stringResource(R.string.sign_up),
-                        modifier = Modifier.clickable(
-                            enabled = !isLoading,
-                            role = Role.Button,
-                            onClick = onSignUpClick
-                        ),
-                        color = FloodGateLink,
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
+                        .padding(bottom = SignInDesign.AccountPromptBottomSpacing)
+                )
 
                 if (noticeMessage != null) {
                     Text(
@@ -316,6 +303,12 @@ private object SignInDesign {
     name = "Sign In",
     widthDp = 412,
     heightDp = 917,
+    showBackground = true
+)
+@Preview(
+    name = "Sign In — small phone",
+    widthDp = 320,
+    heightDp = 640,
     showBackground = true
 )
 @Composable

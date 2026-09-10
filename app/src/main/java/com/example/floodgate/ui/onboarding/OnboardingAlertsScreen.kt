@@ -101,7 +101,8 @@ private fun AlertPreviewCard(
 private val OnboardingLightBlue = Color(0xFF90D5FF)
 private val OnboardingBody = Color(0xFF111215)
 
-@Preview(widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Regular phone", widthDp = 412, heightDp = 917, showBackground = true)
+@Preview(name = "Small phone", widthDp = 320, heightDp = 640, showBackground = true)
 @Composable private fun OnboardingAlertsPreview() {
     FloodGateTheme { OnboardingAlertsScreen({}, {}) }
 }

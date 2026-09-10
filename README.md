@@ -12,6 +12,8 @@ FloodGate is a Kotlin/Jetpack Compose Android MVP for flood-barrier monitoring. 
 
 The dashboard's water level, barrier state, activity, and location are currently **sample data from the Figma design**. No physical flood-barrier device or live sensor backend is connected yet.
 
+All active screens support small phones. Onboarding scales as one centered design surface, authentication and recovery pages scroll vertically, long controls can grow or wrap, and dashboard cards stack when horizontal space or text size requires it. The automated UI suite includes 320×640dp coverage and enlarged text checks.
+
 ## Technology
 
 - Kotlin and Jetpack Compose

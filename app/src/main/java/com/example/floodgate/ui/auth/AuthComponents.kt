@@ -1,17 +1,20 @@
 package com.example.floodgate.ui.auth
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,17 +33,22 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.error
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.floodgate.R
 import com.example.floodgate.ui.theme.FloodGateAction
 import com.example.floodgate.ui.theme.FloodGateBorderAction
 import com.example.floodgate.ui.theme.FloodGateDivider
 import com.example.floodgate.ui.theme.FloodGateHeading
+import com.example.floodgate.ui.theme.FloodGateLink
 import com.example.floodgate.ui.theme.FloodGateNeutral400
+import com.example.floodgate.ui.theme.FloodGateNeutralDefault
 import com.example.floodgate.ui.theme.FloodGateSpacing
 import com.example.floodgate.ui.theme.FloodGateSurfacePrimary
 import com.example.floodgate.ui.theme.FloodGateTextPrimary
@@ -107,7 +115,9 @@ internal fun AuthTextField(
                             Text(
                                 text = placeholder,
                                 color = FloodGateNeutral400,
-                                style = MaterialTheme.typography.bodyMedium
+                                style = MaterialTheme.typography.bodyMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
                         innerTextField()
@@ -176,7 +186,7 @@ internal fun AuthButton(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(AuthControlDimensions.ButtonHeight)
+            .heightIn(min = AuthControlDimensions.ButtonHeight)
             .clip(shape)
             .then(buttonDecoration)
             .alpha(if (interactionEnabled) 1f else AuthControlDimensions.DisabledAlpha)
@@ -195,6 +205,9 @@ internal fun AuthButton(
             )
         } else {
             Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = FloodGateSpacing.Sm, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(FloodGateSpacing.Xs),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -207,8 +220,11 @@ internal fun AuthButton(
                 }
                 Text(
                     text = label,
+                    modifier = Modifier.weight(1f),
                     color = if (filled) FloodGateTextPrimary else FloodGateHeading,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
+                    textAlign = TextAlign.Center,
+                    maxLines = 2
                 )
             }
         }
@@ -220,7 +236,7 @@ internal fun OrDivider(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(AuthControlDimensions.DividerHeight),
+            .heightIn(min = AuthControlDimensions.DividerHeight),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Spacer(
@@ -242,6 +258,58 @@ internal fun OrDivider(modifier: Modifier = Modifier) {
                 .background(FloodGateDivider)
         )
     }
+}
+
+@Composable
+internal fun AuthAccountPrompt(
+    @StringRes prompt: Int,
+    @StringRes action: Int,
+    onActionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
+) {
+    BoxWithConstraints(modifier.fillMaxWidth()) {
+        val useStackedLayout = maxWidth < 280.dp || LocalDensity.current.fontScale > 1.15f
+        if (useStackedLayout) {
+            Column(
+                Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(FloodGateSpacing.Xxs)
+            ) {
+                AuthPromptLabel(prompt)
+                AuthPromptAction(action, enabled, onActionClick)
+            }
+        } else {
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                AuthPromptLabel(prompt)
+                Spacer(Modifier.width(FloodGateSpacing.Xs))
+                AuthPromptAction(action, enabled, onActionClick)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AuthPromptLabel(@StringRes prompt: Int) {
+    Text(
+        text = stringResource(prompt),
+        color = FloodGateNeutralDefault,
+        style = MaterialTheme.typography.bodyMedium
+    )
+}
+
+@Composable
+private fun AuthPromptAction(@StringRes action: Int, enabled: Boolean, onClick: () -> Unit) {
+    Text(
+        text = stringResource(action),
+        modifier = Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+        color = FloodGateLink,
+        style = MaterialTheme.typography.bodyMedium
+    )
 }
 
 internal object AuthControlDimensions {
