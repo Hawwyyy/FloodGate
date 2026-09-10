@@ -3,6 +3,9 @@ package com.example.floodgate.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val FloodGateAction = Color(0xFF335EB3)
+val FloodGateAccent = Color(0xFF008ADE)
+val FloodGateProgressInactive = Color(0xFFD7DEF2)
+val FloodGateProgressActive = Color(0xFF566FEC)
 val FloodGateTextPrimary = Color(0xFFECEDEE)
 val FloodGateSurfacePrimary = Color(0xFFFAFAFA)
 val FloodGateHeading = Color(0xFF111111)

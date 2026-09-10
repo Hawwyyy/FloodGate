@@ -44,13 +44,13 @@ sealed interface SignInResult {
 
 class FirebaseAuthRepository(
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-) {
+) : AuthRepository {
     private var operationInProgress = false
 
-    val currentUser: AuthenticatedUser?
+    override val currentUser: AuthenticatedUser?
         get() = auth.currentUser?.let(::toAuthenticatedUser)
 
-    fun register(
+    override fun register(
         credentials: SignUpCredentials,
         onResult: (RegistrationResult) -> Unit
     ) {
@@ -80,7 +80,7 @@ class FirebaseAuthRepository(
             }
     }
 
-    fun signIn(
+    override fun signIn(
         credentials: SignInCredentials,
         onResult: (SignInResult) -> Unit
     ) {
@@ -105,7 +105,7 @@ class FirebaseAuthRepository(
             }
     }
 
-    fun signOut() {
+    override fun signOut() {
         auth.signOut()
     }
 

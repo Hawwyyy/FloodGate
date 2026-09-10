@@ -8,8 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.floodgate.R
 import com.example.floodgate.data.auth.AuthServiceError
+import com.example.floodgate.data.auth.AuthRepository
+import com.example.floodgate.ui.dashboard.DashboardScreen
 import com.example.floodgate.data.auth.FirebaseAuthRepository
 import com.example.floodgate.data.auth.RegistrationResult
 import com.example.floodgate.data.auth.SignInResult
@@ -17,13 +20,15 @@ import com.example.floodgate.data.auth.SignInResult
 private enum class AuthDestination {
     SIGN_IN,
     SIGN_UP,
+    RECOVERY,
     SUCCESS
 }
 
 @Composable
 fun FloodGateAuthApp(
     onExit: () -> Unit,
-    repository: FirebaseAuthRepository = remember { FirebaseAuthRepository() }
+    repository: AuthRepository = remember { FirebaseAuthRepository() },
+    recoveryModel: RecoveryViewModel = viewModel()
 ) {
     val initialDestination = if (repository.currentUser != null) {
         AuthDestination.SUCCESS
@@ -38,7 +43,7 @@ fun FloodGateAuthApp(
 
     val destination = AuthDestination.valueOf(destinationName)
 
-    BackHandler(enabled = destination != AuthDestination.SIGN_IN || isLoading) {
+    BackHandler(enabled = destination != AuthDestination.RECOVERY && (destination != AuthDestination.SIGN_IN || isLoading)) {
         when {
             isLoading -> Unit
             destination == AuthDestination.SIGN_UP -> {
@@ -77,7 +82,12 @@ fun FloodGateAuthApp(
                 }
             },
             onForgotPasswordClick = {
-                signInError = AuthServiceError.SIGN_IN_FAILED
+                if (!isLoading) {
+                    signInError = null
+                    registrationSucceeded = false
+                    recoveryModel.reset()
+                    destinationName = AuthDestination.RECOVERY.name
+                }
             },
             onGoogleSignInClick = {
                 signInError = AuthServiceError.SIGN_IN_FAILED
@@ -128,7 +138,12 @@ fun FloodGateAuthApp(
             }
         )
 
-        AuthDestination.SUCCESS -> AuthSuccessScreen(
+        AuthDestination.RECOVERY -> RecoveryFlow(recoveryModel) {
+            destinationName = AuthDestination.SIGN_IN.name
+        }
+
+        // Keep the saved destination name compatible with existing saved app state.
+        AuthDestination.SUCCESS -> DashboardScreen(
             email = repository.currentUser?.email.orEmpty(),
             onSignOutClick = {
                 repository.signOut()

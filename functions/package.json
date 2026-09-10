@@ -1,0 +1,13 @@
+{
+  "name": "floodgate-recovery",
+  "private": true,
+  "main": "index.js",
+  "engines": { "node": "22" },
+  "scripts": { "test": "node --test", "test:database": "node --test otp-database.test.js", "check": "node --check index.js && node --check otp-service.js" },
+  "overrides": { "uuid": "11.1.1" },
+  "dependencies": {
+    "firebase-admin": "14.3.0",
+    "firebase-functions": "7.3.2",
+    "nodemailer": "10.0.1"
+  }
+}

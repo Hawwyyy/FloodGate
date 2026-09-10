@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -57,13 +58,14 @@ internal fun AuthTextField(
     errorMessage: String? = null,
     trailingIcon: Int? = null,
     trailingIconDescription: String? = null,
-    onTrailingIconClick: (() -> Unit)? = null
+    onTrailingIconClick: (() -> Unit)? = null,
+    defaultBorderColor: Color = FloodGateBorderAction
 ) {
     val shape = MaterialTheme.shapes.medium
     val borderColor = if (errorMessage != null) {
         MaterialTheme.colorScheme.error
     } else {
-        FloodGateBorderAction
+        defaultBorderColor
     }
 
     Column(modifier = modifier.fillMaxWidth()) {

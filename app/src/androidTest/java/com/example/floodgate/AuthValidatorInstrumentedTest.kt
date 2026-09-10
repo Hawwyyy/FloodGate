@@ -14,13 +14,47 @@ import org.junit.runner.RunWith
 class AuthValidatorInstrumentedTest {
 
     @Test
+    fun email_rejectsUnknownDomainEndingsAndMalformedAddresses() {
+        val invalid = listOf(
+            "dhuaiduad@sjadad.sdaju", "user@gmail.invalidtld", "user@gmail", "user@@gmail.com",
+            "user name@gmail.com", ".user@gmail.com", "user.@gmail.com", "user..name@gmail.com",
+            "user@-example.com", "user@example-.com", "user@example..com", "user@gmail.com.",
+            "a".repeat(65) + "@gmail.com"
+        )
+        invalid.forEach { email ->
+            assertEquals(email, AuthValidationError.EMAIL_INVALID, AuthValidator.validateEmail(email))
+        }
+        assertEquals(AuthValidationError.EMAIL_REQUIRED, AuthValidator.validateEmail("   "))
+    }
+
+    @Test
+    fun email_acceptsRecognizedDomainsWithoutRestrictingProvidersOrCom() {
+        listOf(
+            "user@gmail.com", "user@yahoo.com", "User@OUTLOOK.COM", "person+alerts@example.org",
+            "first.last@company.com.ph", "person@company.co.uk", "person@company.technology",
+            "person@example.museum", "person@example.ph", "  user@gmail.com  "
+        ).forEach { email -> assertNull(email, AuthValidator.validateEmail(email)) }
+    }
+
+    @Test
+    fun signInAndSignUp_rejectScreenshotAddressBeforeReturningCredentials() {
+        val email = "dhuaiduad@sjadad.sdaju"
+        val signIn = AuthValidator.validateSignIn(email, "Password1!")
+        assertNull(signIn.credentials)
+        assertEquals(AuthValidationError.EMAIL_INVALID, signIn.errors.email)
+        val signUp = AuthValidator.validateSignUp("Test", "User", email, "Password1!", "Password1!")
+        assertNull(signUp.credentials)
+        assertEquals(AuthValidationError.EMAIL_INVALID, signUp.errors.email)
+    }
+
+    @Test
     fun signUp_trimsNamesAndEmail_beforeReturningCredentials() {
         val result = AuthValidator.validateSignUp(
             firstName = "  Ada  ",
             lastName = "  Lovelace ",
             email = "  user@gmail.com ",
-            password = "password1",
-            confirmPassword = "password1"
+            password = "Password1!",
+            confirmPassword = "Password1!"
         )
 
         assertFalse(result.errors.hasErrors)
@@ -69,7 +103,7 @@ class AuthValidatorInstrumentedTest {
             confirmPassword = "pass1"
         )
 
-        assertEquals(AuthValidationError.PASSWORD_TOO_SHORT, result.errors.password)
+        org.junit.Assert.assertTrue(result.errors.password.contains(AuthValidationError.PASSWORD_TOO_SHORT))
         assertNull(result.credentials)
     }
 
@@ -83,7 +117,7 @@ class AuthValidatorInstrumentedTest {
             confirmPassword = "password"
         )
 
-        assertEquals(AuthValidationError.PASSWORD_MISSING_NUMBER, result.errors.password)
+        org.junit.Assert.assertTrue(result.errors.password.contains(AuthValidationError.PASSWORD_MISSING_NUMBER))
         assertNull(result.credentials)
     }
 

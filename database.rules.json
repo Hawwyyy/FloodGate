@@ -2,6 +2,16 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "recoveryChallenges": {
+      ".read": false,
+      ".write": false,
+      ".indexOn": ["cleanupAt"]
+    },
+    "recoveryRateLimits": {
+      ".read": false,
+      ".write": false,
+      ".indexOn": ["cleanupAt"]
+    },
     "users": {
       "$uid": {
         ".read": "auth != null && auth.uid == $uid",

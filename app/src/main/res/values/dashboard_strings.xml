@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dashboard_location">Home - Main Entrance</string>
+    <string name="dashboard_demo_notice">Demo data · No device connected</string>
+    <string name="dashboard_photo_description">Sample flood barrier outside a home</string>
+    <string name="dashboard_barrier_status">Barrier Status</string>
+    <string name="dashboard_flood_status">Flood Status</string>
+    <string name="dashboard_deployed">Deployed</string>
+    <string name="dashboard_critical">Critical</string>
+    <string name="dashboard_shield_active">Shield active.</string>
+    <string name="dashboard_flood_risk">Flood risk detected.</string>
+    <string name="dashboard_water_level">Water Level</string>
+    <string name="dashboard_water_reading">95 cm</string>
+    <string name="dashboard_water_trend">Rising by 12 cm in last hour</string>
+    <string name="dashboard_system_status">System Status</string>
+    <string name="dashboard_online">Online</string>
+    <string name="dashboard_last_updated">Last updated - 9:41 pm</string>
+    <string name="dashboard_recent_activity">Recent Activity</string>
+    <string name="dashboard_see_all">See all</string>
+    <string name="dashboard_activity_title">Water level critical</string>
+    <string name="dashboard_activity_time">Today, 9:41 pm</string>
+    <string name="dashboard_quick_controls">Quick Controls</string>
+    <string name="dashboard_deploy">Deploy</string>
+    <string name="dashboard_retract">Retract</string>
+    <string name="dashboard_home">Home</string>
+    <string name="dashboard_devices">Devices</string>
+    <string name="dashboard_notification">Notification</string>
+    <string name="dashboard_profile">Profile</string>
+    <string name="dashboard_no_device">No device connected</string>
+    <string name="dashboard_location_message">This is the sample location from the dashboard design. No location or barrier has been connected to your account yet.</string>
+    <string name="dashboard_activity_message">Water level critical — Today, 9:41 pm. This is a sample event from the design, not a live flood alert.</string>
+    <string name="dashboard_control_message">Connect a real barrier before using quick controls. No command was sent. The readings and protection status shown here are demo data.</string>
+    <string name="dashboard_devices_message">No device integration is configured yet. The dashboard currently displays the design’s sample data.</string>
+    <string name="dashboard_notifications_message">Live notifications are not connected yet. The recent activity shown on Home is a sample event.</string>
+    <string name="dashboard_profile_message">Signed in as %1$s</string>
+    <string name="dashboard_close">Close</string>
+    <string name="dashboard_sign_out">Sign Out</string>
+</resources>

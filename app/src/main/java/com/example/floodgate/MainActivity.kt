@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,6 +25,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -37,16 +43,27 @@ import com.example.floodgate.ui.theme.FloodGateSplashOverlayTop
 import com.example.floodgate.ui.theme.FloodGateTextPrimary
 import com.example.floodgate.ui.theme.FloodGateTheme
 import com.example.floodgate.ui.auth.FloodGateAuthApp
+import com.example.floodgate.data.auth.FirebaseAuthRepository
+import com.example.floodgate.ui.startup.StartupFlow
 import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        configureEdgeToEdgeWindow(useDarkSystemIcons = true)
+        configureEdgeToEdgeWindow(useDarkSystemIcons = false)
 
         setContent {
             FloodGateTheme {
-                FloodGateAuthApp(onExit = ::finish)
+                val repository = remember { FirebaseAuthRepository() }
+                StartupFlow(
+                    isSignedIn = repository.currentUser != null,
+                    onExit = ::finish,
+                    onSplashVisibilityChanged = { isSplashVisible ->
+                        configureEdgeToEdgeWindow(useDarkSystemIcons = !isSplashVisible)
+                    }
+                ) {
+                    FloodGateAuthApp(onExit = ::finish, repository = repository)
+                }
             }
         }
     }
@@ -66,11 +83,18 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SplashScreen(modifier: Modifier = Modifier) {
+fun SplashScreen(
+    modifier: Modifier = Modifier,
+    onContinue: () -> Unit = {}
+) {
+    val continueDescription = stringResource(R.string.splash_continue)
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(androidx.compose.ui.graphics.Color.Black)
+            .testTag("splash_screen")
+            .semantics { contentDescription = continueDescription }
+            .clickable(role = Role.Button, onClick = onContinue)
     ) {
         Box(
             modifier = Modifier

@@ -169,7 +169,9 @@ fun SignUpScreen(
                         password = password,
                         onPasswordChange = {
                             password = it
-                            fieldErrors = fieldErrors.copy(password = null)
+                            fieldErrors = fieldErrors.copy(
+                                password = AuthValidator.validateNewPassword(it)
+                            )
                             onClearAuthError()
                         },
                         passwordVisible = passwordVisible,
@@ -298,7 +300,10 @@ private fun SignUpCard(
             onValueChange = onPasswordChange,
             placeholder = stringResource(R.string.password),
             enabled = !isLoading,
-            errorMessage = errors.password?.let { stringResource(it.messageRes) },
+            errorMessage = errors.password
+                .map { stringResource(it.messageRes) }
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString("\n"),
             visualTransformation = if (passwordVisible) {
                 VisualTransformation.None
             } else {

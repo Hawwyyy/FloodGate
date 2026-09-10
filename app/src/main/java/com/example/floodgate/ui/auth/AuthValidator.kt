@@ -3,6 +3,7 @@ package com.example.floodgate.ui.auth
 import android.util.Patterns
 import androidx.annotation.StringRes
 import com.example.floodgate.R
+import java.util.Locale
 
 data class SignUpCredentials(
     val firstName: String,
@@ -29,6 +30,9 @@ enum class AuthValidationError(@StringRes val messageRes: Int) {
     PASSWORD_REQUIRED(R.string.error_password_required),
     PASSWORD_TOO_SHORT(R.string.error_password_too_short),
     PASSWORD_MISSING_NUMBER(R.string.error_password_missing_number),
+    PASSWORD_MISSING_UPPERCASE(R.string.error_password_missing_uppercase),
+    PASSWORD_MISSING_LOWERCASE(R.string.error_password_missing_lowercase),
+    PASSWORD_MISSING_SPECIAL_CHARACTER(R.string.error_password_missing_special_character),
     CONFIRM_PASSWORD_REQUIRED(R.string.error_confirm_password_required),
     PASSWORDS_DO_NOT_MATCH(R.string.error_passwords_do_not_match)
 }
@@ -37,12 +41,12 @@ data class SignUpFieldErrors(
     val firstName: AuthValidationError? = null,
     val lastName: AuthValidationError? = null,
     val email: AuthValidationError? = null,
-    val password: AuthValidationError? = null,
+    val password: List<AuthValidationError> = emptyList(),
     val confirmPassword: AuthValidationError? = null
 ) {
     val hasErrors: Boolean
         get() = firstName != null || lastName != null || email != null ||
-            password != null || confirmPassword != null
+            password.isNotEmpty() || confirmPassword != null
 }
 
 data class SignInFieldErrors(
@@ -148,16 +152,35 @@ object AuthValidator {
         else -> null
     }
 
-    private fun validateEmail(email: String): AuthValidationError? = when {
-        email.isEmpty() -> AuthValidationError.EMAIL_REQUIRED
-        !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> AuthValidationError.EMAIL_INVALID
-        else -> null
+    // Shared by Sign In, Sign Up and Forgot Password. Syntax alone accepts made-up TLDs.
+    fun validateEmail(email: String): AuthValidationError? {
+        val cleanEmail = email.trim()
+        if (cleanEmail.isEmpty()) return AuthValidationError.EMAIL_REQUIRED
+        if (cleanEmail.length > 254 || !Patterns.EMAIL_ADDRESS.matcher(cleanEmail).matches()) {
+            return AuthValidationError.EMAIL_INVALID
+        }
+        val localPart = cleanEmail.substringBefore('@')
+        val domain = cleanEmail.substringAfter('@')
+        if (localPart.length > 64 || localPart.startsWith('.') || localPart.endsWith('.') ||
+            ".." in localPart || domain.split('.').any {
+                it.isEmpty() || it.length > 63 || it.startsWith('-') || it.endsWith('-')
+            }
+        ) return AuthValidationError.EMAIL_INVALID
+
+        val topLevelDomain = domain.substringAfterLast('.').lowercase(Locale.ROOT)
+        return if (topLevelDomain in EmailTopLevelDomains.recognized) null else AuthValidationError.EMAIL_INVALID
     }
 
-    private fun validateNewPassword(password: String): AuthValidationError? = when {
-        password.isEmpty() -> AuthValidationError.PASSWORD_REQUIRED
-        password.length < MinimumPasswordLength -> AuthValidationError.PASSWORD_TOO_SHORT
-        password.none(Char::isDigit) -> AuthValidationError.PASSWORD_MISSING_NUMBER
-        else -> null
+    // Return every missing requirement so the form can explain exactly what to fix.
+    fun validateNewPassword(password: String): List<AuthValidationError> = buildList {
+        if (password.isEmpty()) add(AuthValidationError.PASSWORD_REQUIRED)
+        if (password.length < MinimumPasswordLength) add(AuthValidationError.PASSWORD_TOO_SHORT)
+        if (password.none(Char::isUpperCase)) add(AuthValidationError.PASSWORD_MISSING_UPPERCASE)
+        if (password.none(Char::isLowerCase)) add(AuthValidationError.PASSWORD_MISSING_LOWERCASE)
+        if (password.none(Char::isDigit)) add(AuthValidationError.PASSWORD_MISSING_NUMBER)
+        // Whitespace and control characters do not count as special characters.
+        if (password.none { !it.isLetterOrDigit() && !it.isWhitespace() && !it.isISOControl() }) {
+            add(AuthValidationError.PASSWORD_MISSING_SPECIAL_CHARACTER)
+        }
     }
 }
