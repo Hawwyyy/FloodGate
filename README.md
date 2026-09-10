@@ -42,10 +42,11 @@ cd FloodGate
 ```
 
 1. Open the repository root in Android Studio.
-2. Allow Gradle Sync to finish. Android Studio creates your machine-specific `local.properties` file automatically.
-3. Confirm that `app/google-services.json` exists. The repository currently contains the FloodGate Firebase client configuration. If your team uses a different Firebase project, download that project's Android configuration and replace this file locally.
-4. Start an API 34 emulator, or connect a physical Android device with Developer options and USB debugging enabled.
-5. Select the `app` run configuration and press **Run**.
+2. Open **Settings/Preferences → Build, Execution, Deployment → Build Tools → Gradle** and set **Gradle JDK** to Android Studio's bundled JDK/JBR 17. Do not enter another teammate's absolute Java path.
+3. Allow Gradle Sync to finish. Android Studio creates your machine-specific `local.properties` file automatically.
+4. Confirm that `app/google-services.json` exists. The repository currently contains the FloodGate Firebase client configuration. If your team uses a different Firebase project, download that project's Android configuration and replace this file locally.
+5. Start an API 34 emulator, or connect a physical Android device with Developer options and USB debugging enabled.
+6. Select the `app` run configuration and press **Run**.
 
 Command-line build:
 
@@ -141,6 +142,7 @@ The UI tests use controlled repositories for authentication and password-recover
 ## Troubleshooting
 
 - **`Unresolved reference: ComponentActivity` or `setContent`:** run Gradle Sync, confirm JDK 17 is selected, and rebuild the project.
+- **`Value ... given for org.gradle.java.home is invalid`:** pull the latest `main` branch. The project does not set a shared Java path. Select the bundled JDK/JBR 17 under Android Studio's Gradle settings. Also remove any stale `org.gradle.java.home` entry from the user's `~/.gradle/gradle.properties`, if one exists there.
 - **`Unable to connect`:** check the emulator/device internet connection, confirm Email/Password is enabled, and verify the Firebase configuration belongs to an active project.
 - **Firebase requests fail only on a teammate's device:** register that device's App Check debug token using the steps above.
 - **Profile save fails after account creation:** confirm Realtime Database exists and deploy `database.rules.json`.
