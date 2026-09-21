@@ -25,6 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,10 +72,11 @@ internal fun AuthTextField(
     defaultBorderColor: Color = FloodGateBorderAction
 ) {
     val shape = MaterialTheme.shapes.medium
+    var focused by remember { mutableStateOf(false) }
     val borderColor = if (errorMessage != null) {
         MaterialTheme.colorScheme.error
     } else {
-        defaultBorderColor
+        if (focused) FloodGateAction else defaultBorderColor.copy(alpha = 0.5f)
     }
 
     Column(modifier = modifier.fillMaxWidth()) {
@@ -83,6 +86,7 @@ internal fun AuthTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(AuthControlDimensions.FieldHeight)
+                .onFocusChanged { focused = it.isFocused }
                 .clip(shape)
                 .background(FloodGateSurfacePrimary)
                 .border(AuthControlDimensions.BorderWidth, borderColor, shape)
@@ -222,7 +226,7 @@ internal fun AuthButton(
                     text = label,
                     modifier = Modifier.weight(1f),
                     color = if (filled) FloodGateTextPrimary else FloodGateHeading,
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium),
                     textAlign = TextAlign.Center,
                     maxLines = 2
                 )
@@ -306,7 +310,7 @@ private fun AuthPromptLabel(@StringRes prompt: Int) {
 private fun AuthPromptAction(@StringRes action: Int, enabled: Boolean, onClick: () -> Unit) {
     Text(
         text = stringResource(action),
-        modifier = Modifier.clickable(enabled = enabled, role = Role.Button, onClick = onClick),
+        modifier = Modifier.heightIn(min = 48.dp).clickable(enabled = enabled, role = Role.Button, onClick = onClick).padding(vertical = 12.dp),
         color = FloodGateLink,
         style = MaterialTheme.typography.bodyMedium
     )

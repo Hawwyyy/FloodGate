@@ -2,6 +2,26 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "eldroid": {
+      "ledControl": {
+        ".read": "auth != null",
+        "command": {
+          ".write": "auth != null && auth.token.firebase.sign_in_provider != 'anonymous' && !root.child('eldroidDeviceUids').child(auth.uid).exists()",
+          ".validate": "newData.isString() && (newData.val() == 'ON' || newData.val() == 'OFF')"
+        },
+        "actualState": {
+          ".write": "auth != null && root.child('eldroidDeviceUids').child(auth.uid).val() == true",
+          ".validate": "newData.isBoolean()"
+        },
+        "device": {
+          ".write": "auth != null && root.child('eldroidDeviceUids').child(auth.uid).val() == true && newData.exists()",
+          "lastUpdate": { ".validate": "newData.isNumber() && newData.val() == now" },
+          "heartbeat": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() % 1 == 0" },
+          "$other": { ".validate": false }
+        },
+        "$other": { ".validate": false }
+      }
+    },
     "recoveryChallenges": {
       ".read": false,
       ".write": false,

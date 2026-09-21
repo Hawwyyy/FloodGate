@@ -22,6 +22,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.floodgate.R
 import com.example.floodgate.ui.dashboard.BarrierCard
 import com.example.floodgate.ui.dashboard.SystemStatusCard
@@ -69,8 +70,8 @@ private fun MonitoringStatusPreview(scale: Float, modifier: Modifier = Modifier)
     MaterialTheme(
         typography = typography.copy(
             bodyLarge = typography.bodyLarge.copy(platformStyle = noFontPadding),
-            bodyMedium = typography.bodyMedium.copy(platformStyle = noFontPadding),
-            bodySmall = typography.bodySmall.copy(platformStyle = noFontPadding)
+            bodyMedium = typography.bodyMedium.copy(platformStyle = noFontPadding, fontSize = 14.sp, lineHeight = 18.sp),
+            bodySmall = typography.bodySmall.copy(platformStyle = noFontPadding, fontSize = 12.sp, lineHeight = 16.sp)
         )
     ) {
         Layout(
@@ -124,13 +125,13 @@ private object MonitoringPreviewDesign {
     const val Left = 16f
     const val Top = 294f
     const val Width = 380f
-    const val Height = 440f
+    const val Height = 460f
     const val CardGap = 16f
     const val WaterCardWidth = 190f
     const val MetricGap = 17f
     const val SystemCardWidth = 173f
     const val CardRadius = 8f
-    const val ShadowElevation = 4f
+    const val ShadowElevation = 0f
 }
 
 @Preview(name = "Regular phone", widthDp = 412, heightDp = 917, showBackground = true)

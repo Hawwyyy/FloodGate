@@ -133,10 +133,21 @@ class FirebaseAuthRepository(
             "createdAt" to ServerValue.TIMESTAMP
         )
 
-        database.reference
-            .child("users")
-            .child(user.uid)
-            .setValue(profile)
+        val profileWrite = try {
+            database.reference
+                .child("users")
+                .child(user.uid)
+                .setValue(profile)
+        } catch (_: RuntimeException) {
+            rollbackCreatedUser(
+                user = user,
+                error = AuthServiceError.DATABASE_NOT_CONFIGURED,
+                onResult = onResult
+            )
+            return
+        }
+
+        profileWrite
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val uid = user.uid
@@ -159,10 +170,16 @@ class FirebaseAuthRepository(
         error: AuthServiceError,
         onResult: (RegistrationResult) -> Unit
     ) {
-        user.delete().addOnCompleteListener {
-            auth.signOut()
-            finishRegistration(RegistrationResult.Failure(error), onResult)
+        // Deleting the partially-created Auth account is best-effort cleanup. Never wait
+        // for that network request to finish: a stalled delete previously left Sign Up in
+        // its loading state forever when Realtime Database was unavailable.
+        try {
+            user.delete()
+        } catch (_: RuntimeException) {
+            // The original profile error is the useful result for the UI.
         }
+        auth.signOut()
+        finishRegistration(RegistrationResult.Failure(error), onResult)
     }
 
     private fun finishRegistration(

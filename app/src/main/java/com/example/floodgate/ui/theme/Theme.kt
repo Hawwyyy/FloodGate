@@ -9,6 +9,11 @@ import androidx.compose.ui.unit.dp
 
 private val FloodGateColorScheme = lightColorScheme(
     primary = FloodGateAction,
+    secondary = FloodGateAccent,
+    onSecondary = FloodGateSurfacePrimary,
+    surfaceVariant = FloodGateNeutral100,
+    onSurfaceVariant = FloodGateNeutralDefault,
+    surfaceTint = FloodGateAction,
     onPrimary = FloodGateTextPrimary,
     background = FloodGateSurfacePrimary,
     onBackground = FloodGateHeading,
@@ -18,7 +23,9 @@ private val FloodGateColorScheme = lightColorScheme(
 )
 
 private val FloodGateShapes = Shapes(
-    medium = RoundedCornerShape(12.dp),
+    small = RoundedCornerShape(8.dp),
+    medium = RoundedCornerShape(16.dp),
+    large = RoundedCornerShape(18.dp),
     extraLarge = RoundedCornerShape(24.dp)
 )
 

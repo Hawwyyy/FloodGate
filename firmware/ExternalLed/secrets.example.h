@@ -1,0 +1,6 @@
+#define WIFI_SSID "YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "YOUR_WIFI_PASSWORD"
+#define API_KEY "YOUR_EXISTING_FIREBASE_WEB_API_KEY"
+#define DATABASE_URL "https://floodgate-c7bb3-default-rtdb.asia-southeast1.firebasedatabase.app"
+#define DEVICE_EMAIL "YOUR_DEDICATED_DEVICE_ACCOUNT_EMAIL"
+#define DEVICE_PASSWORD "YOUR_DEVICE_ACCOUNT_PASSWORD"

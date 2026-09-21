@@ -164,24 +164,24 @@ internal object OnboardingDesign {
     const val FrameHeight = 917f
     const val HeaderTop = 118f
     const val HeaderWidth = 251f
-    const val HeaderGap = 8f
-    const val HeadingFontSize = 40f
-    const val HeadingLineHeight = 48f
+    const val HeaderGap = 16f
+    const val HeadingFontSize = 36f
+    const val HeadingLineHeight = 44f
     const val BodyFontSize = 16f
     const val BodyLineHeight = 20f
     const val IllustrationTop = 318f
     const val IllustrationWidth = 676f
     const val IllustrationHeight = 451f
     const val ProgressTouchTop = 757.5f
-    const val ProgressTouchWidth = 93f
+    const val ProgressTouchWidth = 168f
     const val ProgressTouchHeight = 48f
-    const val ProgressTouchCellWidth = 31f
-    const val ProgressDotSize = 15f
+    const val ProgressTouchCellWidth = 56f
+    const val ProgressDotSize = 10f
     const val PageCount = 3
     const val ButtonTop = 805f
     const val ButtonWidth = 380f
     const val ButtonHeight = 52f
-    const val ButtonRadius = 12f
+    const val ButtonRadius = 16f
 }
 
 @Preview(name = "Regular phone", widthDp = 412, heightDp = 917, showBackground = true)

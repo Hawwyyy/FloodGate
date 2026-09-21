@@ -63,8 +63,8 @@ private fun AlertPreviewCard(
     scale: Float,
     modifier: Modifier
 ) {
-    Row(modifier.width((281f * scale).dp).shadow((4f * scale).dp,
-        RoundedCornerShape((8f * scale).dp)).clip(RoundedCornerShape((8f * scale).dp))
+    Row(modifier.width((281f * scale).dp)
+        .clip(RoundedCornerShape((16f * scale).dp))
         .background(FloodGateNeutral100).padding((8f * scale).dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy((16f * scale).dp)) {

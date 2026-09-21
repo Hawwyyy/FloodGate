@@ -114,30 +114,12 @@ fun SplashScreen(
 @Composable
 private fun FigmaSplashBackground() {
     Box(modifier = Modifier.fillMaxSize()) {
-        Layout(
-            content = {
-                Image(
-                    painter = painterResource(R.drawable.splash_screen_background),
-                    contentDescription = null,
-                    contentScale = ContentScale.FillBounds
-                )
-            },
+        Image(
+            painter = painterResource(R.drawable.splash_screen_background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
-        ) { measurables, constraints ->
-            val designScale = constraints.maxWidth / SplashDesign.FrameWidth
-            val backgroundWidth =
-                (SplashDesign.BackgroundWidth * designScale).roundToInt()
-            val backgroundHeight =
-                (SplashDesign.BackgroundHeight * designScale).roundToInt()
-            val backgroundX = (SplashDesign.BackgroundX * designScale).roundToInt()
-            val image = measurables.first().measure(
-                Constraints.fixed(backgroundWidth, backgroundHeight)
-            )
-
-            layout(constraints.maxWidth, constraints.maxHeight) {
-                image.placeRelative(backgroundX, 0)
-            }
-        }
+        )
 
         Box(
             modifier = Modifier

@@ -87,6 +87,8 @@ private fun DashboardContent(email: String, onSignOutClick: () -> Unit) {
             Caption(R.string.dashboard_demo_notice, Modifier.padding(bottom = DashboardTokens.SmallGap))
             BarrierCard()
             Spacer(Modifier.height(DashboardTokens.SectionGap))
+            com.example.floodgate.ledcontrol.view.ExternalLedCard(onAuthLost = onSignOutClick)
+            Spacer(Modifier.height(DashboardTokens.SectionGap))
             // Stack metrics on narrow screens or with larger accessibility text instead of clipping.
             BoxWithConstraints {
                 if (maxWidth < 350.dp || LocalDensity.current.fontScale > 1.15f) {
@@ -244,7 +246,7 @@ internal fun SystemStatusCard(modifier: Modifier) {
 
 @Composable
 private fun ActivityCard(onClick: () -> Unit) {
-    Row(Modifier.fillMaxWidth().shadow(2.dp, RoundedCornerShape(DashboardTokens.CardRadius))
+    Row(Modifier.fillMaxWidth()
         .clip(RoundedCornerShape(DashboardTokens.CardRadius)).background(DashboardTokens.ActivitySurface)
         .clickable(role = Role.Button, onClick = onClick)
         .padding(horizontal = DashboardTokens.PagePadding, vertical = DashboardTokens.CardVerticalPadding),
@@ -291,9 +293,11 @@ private fun NavigationItem(@DrawableRes icon: Int, @StringRes label: Int, modifi
     Column(modifier.heightIn(min = DashboardTokens.TouchTarget)
         .semantics { selected = isSelected }.clickable(role = Role.Tab, onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally) {
-        DashboardIcon(icon, Modifier.size(DashboardTokens.NavigationIcon))
-        Text(stringResource(label), style = MaterialTheme.typography.bodyMedium,
-            color = DashboardTokens.Body, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+        Image(painterResource(icon), null, Modifier.size(DashboardTokens.NavigationIcon),
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(if (isSelected) FloodGateAction else FloodGateNeutral400))
+        Spacer(Modifier.height(4.dp))
+        Text(stringResource(label), style = MaterialTheme.typography.bodySmall,
+            color = if (isSelected) FloodGateAction else FloodGateNeutral400, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
     }
 }
 
@@ -316,7 +320,7 @@ private fun DashboardInfoDialog(dialog: DashboardDialog, email: String, onDismis
         DashboardDialog.NOTIFICATIONS -> R.string.dashboard_notifications_message
         DashboardDialog.PROFILE -> R.string.dashboard_profile_message
     }
-    AlertDialog(onDismissRequest = onDismiss,
+    AlertDialog(onDismissRequest = onDismiss, containerColor = FloodGateSurfacePrimary,
         title = { Text(stringResource(title)) },
         text = { Text(if (dialog == DashboardDialog.PROFILE) stringResource(message, email) else stringResource(message)) },
         confirmButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.dashboard_close)) } },

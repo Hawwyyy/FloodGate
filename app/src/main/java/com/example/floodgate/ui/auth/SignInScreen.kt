@@ -284,14 +284,14 @@ fun SignInScreen(
 private object SignInDesign {
     val ContentWidth = 380.dp
     val BackTopSpacing = 8.dp
-    val BackTouchTarget = 40.dp
+    val BackTouchTarget = 48.dp
     val BackTouchRadius = 20.dp
-    val BackToHeadingSpacing = 57.dp
-    val HeadingToCaptionSpacing = 6.dp
-    val CaptionToFieldsSpacing = 55.dp
-    val LinkToButtonSpacing = 40.dp
-    val ButtonToDividerSpacing = 32.dp
-    val DividerToGoogleSpacing = 32.dp
+    val BackToHeadingSpacing = 32.dp
+    val HeadingToCaptionSpacing = 12.dp
+    val CaptionToFieldsSpacing = 32.dp
+    val LinkToButtonSpacing = 24.dp
+    val ButtonToDividerSpacing = 24.dp
+    val DividerToGoogleSpacing = 24.dp
     val AccountPromptBottomSpacing = 26.dp
     val NoticeBottomSpacing = 72.dp
     val ScrollBottomPadding = 120.dp

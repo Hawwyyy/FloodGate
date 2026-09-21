@@ -204,7 +204,7 @@ private object RecoveryDesign {
     val CenterClearance = 88.dp
     val CircleSize = 62.dp
     val IconSize = 30.dp
-    val EmailCircle = Color(0xFFE5E7FF)
+    val EmailCircle = com.example.floodgate.ui.theme.FloodGateAction.copy(alpha = 0.08f)
 }
 
 @Preview(name = "Forgot Password", widthDp = 412, heightDp = 917)

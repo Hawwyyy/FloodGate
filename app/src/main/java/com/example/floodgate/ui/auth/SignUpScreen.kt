@@ -403,14 +403,14 @@ private fun SignUpCard(
 private object SignUpDesign {
     val ContentWidth = 380.dp
     val BackTopSpacing = 8.dp
-    val BackTouchTarget = 40.dp
+    val BackTouchTarget = 48.dp
     val BackTouchRadius = 20.dp
     val BackToBrandSpacing = 6.dp
-    val BrandToCardSpacing = 13.dp
+    val BrandToCardSpacing = 24.dp
     val ScreenBottomSpacing = 60.dp
     val CardHeight = 658.dp
-    val CardElevation = 8.dp
-    val CardHorizontalPadding = 24.dp
+    val CardElevation = 0.dp
+    val CardHorizontalPadding = 20.dp
     val CardTopPadding = 24.dp
     val HeaderToFieldsSpacing = 24.dp
     val FieldsToButtonSpacing = 24.dp
