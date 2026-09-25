@@ -92,7 +92,7 @@ fun ExternalLedCard(onAuthLost: () -> Unit) {
         LedCommandButton(if (confirmedOn) "LED is on" else "Turn on", true,
             !state.loading && !state.sending && !confirmedOn,
             state.sending && state.sendingCommand == "ON", presenter::onTurnOnClicked)
-        LedCommandButton(if (confirmedOff) "LED is off" else "Turn off", false,
+        LedCommandButton(if (confirmedOff) "LED is off" else "Turn off", true,
             !state.loading && !state.sending && !confirmedOff,
             state.sending && state.sendingCommand == "OFF", presenter::onTurnOffClicked)
         if (state.sending) {
