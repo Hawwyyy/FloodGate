@@ -3,6 +3,33 @@
     ".read": false,
     ".write": false,
     "eldroid": {
+      "gates": {
+        ".read": "auth != null",
+        "$gateId": {
+          "name": {
+            ".write": "auth != null && auth.token.firebase.sign_in_provider == 'password' && !data.exists() && newData.exists() && $gateId != 'gate1' && $gateId.matches(/^[a-z][a-z0-9_-]{0,39}$/)",
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 60"
+          },
+          "ledControl": {
+            "command": {
+              ".write": "auth != null && auth.token.firebase.sign_in_provider == 'password' && newData.exists()",
+              ".validate": "newData.isString() && (newData.val() == 'ON' || newData.val() == 'OFF')"
+            },
+            "actualState": {
+              ".write": "auth != null && root.child('gateDeviceUids').child($gateId).child(auth.uid).val() == true && newData.exists()",
+              ".validate": "newData.isBoolean()"
+            },
+            "device": {
+              ".write": "auth != null && root.child('gateDeviceUids').child($gateId).child(auth.uid).val() == true && newData.exists()",
+              "lastUpdate": { ".validate": "newData.isNumber() && newData.val() == now" },
+              "heartbeat": { ".validate": "newData.isNumber() && newData.val() >= 0" },
+              "$other": { ".validate": false }
+            },
+            "$other": { ".validate": false }
+          },
+          "$other": { ".validate": false }
+        }
+      },
       "ledControl": {
         ".read": "auth != null",
         "command": {

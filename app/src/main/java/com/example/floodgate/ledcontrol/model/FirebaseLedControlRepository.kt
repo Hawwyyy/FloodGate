@@ -3,10 +3,10 @@ package com.example.floodgate.ledcontrol.model
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
-class FirebaseLedControlRepository : LedControlRepository {
+class FirebaseLedControlRepository(private val gate: GateDevice = GateDevice.Existing) : LedControlRepository {
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
-    private val ref = database.getReference("eldroid/ledControl")
+    private val ref = database.getReference(gate.controlPath)
     private var listener: ValueEventListener? = null
     private var offsetListener: ValueEventListener? = null
     private var authListener: FirebaseAuth.AuthStateListener? = null

@@ -1,5 +1,23 @@
 # External LED demonstration
 
+## Named gates
+
+Open the Devices tab to see Gate 1 and register additional gates with **Add gate**.
+Gate 1 is the existing `/eldroid/ledControl` connection; its firmware does not need changing.
+Additional names are stored at `/eldroid/gates/<id>/name`. Each additional board must use
+`/eldroid/gates/<id>/ledControl` as its firmware `ROOT`; commands and telemetry are isolated beneath that path.
+Registering a name alone does not connect hardware: the card stays UNAVAILABLE until the board sends telemetry.
+Use a different ID for each board. Two boards using the same path cannot be distinguished.
+For the supplied anonymous sketch, change all four path defines to the new gate's prefix.
+For the repository firmware, changing ROOT changes both the command and telemetry paths.
+
+Merge the new `eldroid/gates` rules into your existing live rules before using registration.
+Authorize each additional board UID at `/gateDeviceUids/<id>/<uid>: true` using the administrator console.
+Keep Gate 1's existing authorization. Never overwrite other live device rules when merging.
+The current app retains the existing shared-demo access model: authenticated users see the shared gate list.
+This is not device ownership/pairing for independent households. Names are display labels; IDs identify data paths,
+not discovered hardware serial numbers. No Firebase rules have been deployed by this change.
+
 The existing Compose dashboard contains the MVP LED card. Authentication, the other dashboard cards, and `/devices/floodgate01` are unchanged. Other dashboard readings are still demo data.
 
 ## Firebase setup

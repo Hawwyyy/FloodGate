@@ -7,6 +7,8 @@
 // For optical confirmation attach a suitable 3.3V digital sensor and set this pin.
 const int LED_PIN = 23;
 const int FEEDBACK_PIN = -1;
+// Gate 1 retains its existing path. For another board, use its registered ID,
+// for example "/eldroid/gates/gate2/ledControl".
 const char *ROOT = "/eldroid/ledControl";
 FirebaseData fbdo;
 FirebaseAuth auth;
@@ -53,7 +55,7 @@ void loop() {
   if (ready) {
     if (now - lastPoll >= 500) {
       lastPoll = now;
-      if (Firebase.RTDB.getString(&fbdo, "/eldroid/ledControl/command")) {
+      if (Firebase.RTDB.getString(&fbdo, String(ROOT) + "/command")) {
         String command = fbdo.stringData();
         if (command == "ON" || command == "OFF") {
           int target = command == "ON" ? HIGH : LOW;

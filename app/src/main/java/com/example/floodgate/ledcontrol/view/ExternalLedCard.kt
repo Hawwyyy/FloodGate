@@ -39,15 +39,17 @@ private class MainThreadLedScheduler : LedScheduler {
 }
 
 @Composable
-fun ExternalLedCard(onAuthLost: () -> Unit) {
-    var state by remember { mutableStateOf(LedUiState()) }
+fun ExternalLedCard(onAuthLost: () -> Unit, gate: GateDevice = GateDevice.Existing,
+                    collapsible: Boolean = false) {
+    var expanded by androidx.compose.runtime.saveable.rememberSaveable(gate.id) { mutableStateOf(false) }
+    var state by remember(gate.id) { mutableStateOf(LedUiState()) }
     val context = LocalContext.current
     val currentAuthLost by rememberUpdatedState(onAuthLost)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val presenter = remember {
-        LedControlPresenter(FirebaseLedControlRepository(), object : LedControlView {
+    val presenter = remember(gate.id) {
+        LedControlPresenter(FirebaseLedControlRepository(gate), object : LedControlView {
             override fun render(stateValue: LedUiState) { state = stateValue }
-            override fun showSuccess(message: String) { Toast.makeText(context, message, Toast.LENGTH_SHORT).show() }
+            override fun showSuccess(message: String) { Toast.makeText(context, "${gate.name}: $message", Toast.LENGTH_SHORT).show() }
             override fun returnToSignIn() { currentAuthLost() }
         }, MainThreadLedScheduler())
     }
@@ -66,14 +68,21 @@ fun ExternalLedCard(onAuthLost: () -> Unit) {
     Column(Modifier.fillMaxWidth().background(DashboardTokens.Card,
         RoundedCornerShape(DashboardTokens.CardRadius)).padding(DashboardTokens.PagePadding),
         verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text("External LED", style = MaterialTheme.typography.headlineSmall)
+        Text(gate.name, style = MaterialTheme.typography.headlineSmall)
+        Text("External LED · ${gate.id}", style = MaterialTheme.typography.bodySmall)
         Text("ESP32 · ${state.device.name}", style = MaterialTheme.typography.bodySmall,
             color = com.example.floodgate.ui.theme.FloodGateNeutralDefault,
             modifier = Modifier.background(com.example.floodgate.ui.theme.FloodGateNeutral100,
                 RoundedCornerShape(8.dp)).padding(horizontal = 12.dp, vertical = 8.dp))
-        LedStatusRow("Requested Command", state.data.command ?: "UNKNOWN")
+        if (collapsible) TextButton(onClick = { expanded = !expanded }) {
+            Text(if (expanded) "Hide details" else "View ${gate.name} details")
+        }
+        if (!collapsible || expanded) {
+        Divider()
+        Text("LED status", style = com.example.floodgate.ui.theme.FloodGateSectionHeading)
+        LedStatusRow("Requested setting", state.data.command ?: "UNKNOWN")
         val actual = when (state.data.actualState) { true -> "ON"; false -> "OFF"; null -> "UNKNOWN" }
-        LedStatusRow(if (state.device == DeviceStatus.ONLINE) "Actual LED Status" else "Last Known LED", actual)
+        LedStatusRow(if (state.device == DeviceStatus.ONLINE) "Device-reported LED" else "Last known LED", actual)
         Text("Last update: " + (state.data.lastUpdate?.let {
             DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM).format(Date(it))
         } ?: "Unavailable"), style = MaterialTheme.typography.bodySmall)
@@ -85,6 +94,8 @@ fun ExternalLedCard(onAuthLost: () -> Unit) {
             Text(it, color = MaterialTheme.colorScheme.error)
             if (!state.sending) TextButton(onClick = { presenter.stop(); presenter.start() }) { Text("Retry") }
         }
+        Divider()
+        Text("LED controls", style = com.example.floodgate.ui.theme.FloodGateSectionHeading)
         // Full-width buttons remain readable on small phones and with larger text.
         // Only fresh telemetry confirms the state. Allow reversing an unconfirmed request.
         val confirmedOn = state.device == DeviceStatus.ONLINE && state.data.actualState == true && state.data.command != "OFF"
@@ -100,6 +111,7 @@ fun ExternalLedCard(onAuthLost: () -> Unit) {
         } else if ((state.data.command == "ON" && state.data.actualState != true) ||
             (state.data.command == "OFF" && state.data.actualState != false)) {
             Text("Waiting for ESP32 confirmation", style = MaterialTheme.typography.bodySmall)
+        }
         }
     }
 }

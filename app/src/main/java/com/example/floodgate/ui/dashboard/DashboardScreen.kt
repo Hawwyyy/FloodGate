@@ -45,7 +45,8 @@ private enum class DashboardDialog { LOCATION, ACTIVITY, CONTROL, DEVICES, NOTIF
 
 /** The design's readings are explicitly sample data until a device repository is connected. */
 @Composable
-fun DashboardScreen(email: String, onSignOutClick: () -> Unit) {
+fun DashboardScreen(email: String, onSignOutClick: () -> Unit,
+                    barrierRepository: com.example.floodgate.barrier.model.BarrierRepository? = null) {
     // Android's legacy font padding adds space absent from Figma line boxes.
     val typography = MaterialTheme.typography
     val noFontPadding = PlatformTextStyle(includeFontPadding = false)
@@ -54,17 +55,42 @@ fun DashboardScreen(email: String, onSignOutClick: () -> Unit) {
         bodyLarge = typography.bodyLarge.copy(platformStyle = noFontPadding),
         bodyMedium = typography.bodyMedium.copy(platformStyle = noFontPadding),
         bodySmall = typography.bodySmall.copy(platformStyle = noFontPadding)
-    )) { DashboardContent(email, onSignOutClick) }
+    )) { DashboardContent(email, onSignOutClick, barrierRepository) }
 }
 
 @Composable
-private fun DashboardContent(email: String, onSignOutClick: () -> Unit) {
+private fun DashboardContent(email: String, onSignOutClick: () -> Unit,
+                             barrierRepository: com.example.floodgate.barrier.model.BarrierRepository?) {
+    val liveRepository = barrierRepository ?: remember { com.example.floodgate.barrier.model.FirebaseBarrierRepository() }
+    var devicesSelected by rememberSaveable { mutableStateOf(false) }
     var dialog by rememberSaveable { mutableStateOf<DashboardDialog?>(null) }
+    androidx.activity.compose.BackHandler(enabled = devicesSelected) { devicesSelected = false }
+    Column(Modifier.fillMaxSize().background(FloodGateDashboardBackground)
+        .statusBarsPadding().navigationBarsPadding().testTag("dashboard")) {
+        com.example.floodgate.barrier.view.LiveBarrierScreen(onSignOutClick, Modifier.weight(1f),
+            showDeviceDetails = devicesSelected, onOpenDevices = { devicesSelected = true },
+            onNotifications = { dialog = DashboardDialog.NOTIFICATIONS },
+            onProfile = { dialog = DashboardDialog.PROFILE },
+            repository = liveRepository)
+        DashboardNavigation(devicesSelected, onHome = { devicesSelected = false }) {
+            if (it == DashboardDialog.DEVICES) devicesSelected = true else dialog = it
+        }
+    }
+    dialog?.let { DashboardInfoDialog(it, email, { dialog = null }, onSignOutClick) }
+}
+
+@Composable
+private fun LegacyDashboardContent(email: String, onSignOutClick: () -> Unit) {
+    var dialog by rememberSaveable { mutableStateOf<DashboardDialog?>(null) }
+    var devicesSelected by rememberSaveable { mutableStateOf(false) }
+    androidx.activity.compose.BackHandler(enabled = devicesSelected) { devicesSelected = false }
     Column(
         Modifier.fillMaxSize().background(FloodGateSurfacePrimary)
             .statusBarsPadding().navigationBarsPadding().testTag("dashboard")
     ) {
-        Column(
+        if (devicesSelected) {
+            com.example.floodgate.ledcontrol.view.GateDevicesScreen(onSignOutClick, Modifier.weight(1f))
+        } else Column(
             Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState())
                 .padding(horizontal = DashboardTokens.PagePadding)
                 .padding(top = DashboardTokens.HeaderTopPadding, bottom = DashboardTokens.SectionGap)
@@ -126,7 +152,9 @@ private fun DashboardContent(email: String, onSignOutClick: () -> Unit) {
                     leadingIcon = R.drawable.dashboard_retract)
             }
         }
-        DashboardNavigation { dialog = it }
+        DashboardNavigation(devicesSelected, onHome = { devicesSelected = false }) {
+            if (it == DashboardDialog.DEVICES) devicesSelected = true else dialog = it
+        }
     }
     dialog?.let { current ->
         DashboardInfoDialog(current, email, onDismiss = { dialog = null }, onSignOut = {
@@ -191,7 +219,7 @@ private fun BarrierStatus(@StringRes title: Int, @StringRes status: Int, @String
 @Composable
 private fun MetricCard(modifier: Modifier, @DrawableRes icon: Int, @StringRes title: Int,
                        content: @Composable ColumnScope.() -> Unit) {
-    Column(modifier.heightIn(min = 115.dp).border(1.dp, DashboardTokens.SecondaryBorder,
+    Column(modifier.heightIn(min = 115.dp).background(Color.White, RoundedCornerShape(DashboardTokens.CardRadius)).border(1.dp, DashboardTokens.SecondaryBorder,
         RoundedCornerShape(DashboardTokens.CardRadius)).padding(
         horizontal = DashboardTokens.PagePadding, vertical = DashboardTokens.CardVerticalPadding),
         verticalArrangement = Arrangement.Center) {
@@ -262,7 +290,7 @@ private fun ActivityCard(onClick: () -> Unit) {
 }
 
 @Composable
-private fun DashboardNavigation(onSelect: (DashboardDialog) -> Unit) {
+private fun DashboardNavigation(devicesSelected: Boolean, onHome: () -> Unit, onSelect: (DashboardDialog) -> Unit) {
     val scrollTabs = LocalDensity.current.fontScale > 1.15f
     Column {
         Spacer(Modifier.fillMaxWidth().height(1.dp).background(DashboardTokens.SecondaryBorder))
@@ -272,8 +300,8 @@ private fun DashboardNavigation(onSelect: (DashboardDialog) -> Unit) {
             .padding(horizontal = 12.dp, vertical = 12.dp),
             horizontalArrangement = if (scrollTabs) Arrangement.spacedBy(24.dp) else Arrangement.Start) {
             val itemModifier = if (scrollTabs) Modifier.widthIn(min = 48.dp) else Modifier.weight(1f)
-            NavigationItem(R.drawable.dashboard_home, R.string.dashboard_home, itemModifier, true) { }
-            NavigationItem(R.drawable.dashboard_device, R.string.dashboard_devices, itemModifier) {
+            NavigationItem(R.drawable.dashboard_home, R.string.dashboard_home, itemModifier, !devicesSelected, onHome)
+            NavigationItem(R.drawable.dashboard_device, R.string.dashboard_devices, itemModifier, devicesSelected) {
                 onSelect(DashboardDialog.DEVICES)
             }
             NavigationItem(R.drawable.dashboard_notification, R.string.dashboard_notification,
@@ -339,7 +367,7 @@ private fun DashboardIcon(@DrawableRes icon: Int, modifier: Modifier = Modifier.
 @Composable
 private fun SectionTitle(@StringRes title: Int, modifier: Modifier = Modifier) {
     Text(stringResource(title), modifier, color = DashboardTokens.Body,
-        style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
+        style = FloodGateSectionHeading)
 }
 
 @Composable

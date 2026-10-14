@@ -66,6 +66,12 @@ val Typography = Typography(
     )
 )
 
+val FloodGateSectionHeading = Typography.titleMedium.copy(
+    fontSize = 20.sp,
+    lineHeight = 28.sp,
+    fontWeight = FontWeight.SemiBold
+)
+
 val FloodGateBrandLine = TextStyle(
     fontWeight = FontWeight.Normal,
     lineHeight = 88.sp,

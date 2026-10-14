@@ -1,6 +1,10 @@
 # FloodGate Android
 
-FloodGate is a Kotlin/Jetpack Compose Android MVP for flood-barrier monitoring. The current build includes the Figma-based splash and onboarding flow, email/password authentication, Firebase Realtime Database user profiles, Firebase password-reset email links, and a responsive dashboard that currently displays design/demo monitoring data.
+The Home dashboard now integrates live `/devices/floodgate01` telemetry and atomic barrier commands.
+See [Flood barrier integration and hardware test checklist](FLOOD_BARRIER_SETUP.md).
+The earlier named LED-demo devices remain separate under the Devices tab.
+
+FloodGate is a Kotlin/Jetpack Compose Android MVP for flood-barrier monitoring. It includes splash and onboarding, email/password authentication, Realtime Database user profiles, password-reset email links, and a live ESP32 flood-barrier dashboard.
 
 ## App flow
 
@@ -10,7 +14,7 @@ FloodGate is a Kotlin/Jetpack Compose Android MVP for flood-barrier monitoring. 
 4. Registration stores only the user's first name, last name, email, and creation timestamp under `users/{uid}` in Realtime Database. Passwords are never stored in the database. Registration returns to Sign In.
 5. A successful sign-in, or an existing Firebase session, opens the dashboard.
 
-The dashboard's water level, barrier state, activity, and location are currently **sample data from the Figma design**. No physical flood-barrier device or live sensor backend is connected yet.
+Home displays device-reported water level, outputs and barrier telemetry from `/devices/floodgate01`. Hardware setup and live permissions must match the integration contract. Onboarding illustrations remain sample data.
 
 All active screens support small phones. Onboarding scales as one centered design surface, authentication and recovery pages scroll vertically, long controls can grow or wrap, and dashboard cards stack when horizontal space or text size requires it. The automated UI suite includes 320×640dp coverage and enlarged text checks.
 
@@ -21,7 +25,7 @@ All active screens support small phones. Onboarding scales as one centered desig
 - Android Gradle Plugin 8.3.2 and Gradle 8.4
 - Compile/target SDK 34; minimum SDK 24
 - Firebase Authentication: Email/Password and password-reset email links
-- Firebase Realtime Database: basic user profiles
+- Firebase Realtime Database: user profiles, device telemetry and atomic command mailboxes
 - Firebase App Check: debug provider in debug builds, Play Integrity in release builds
 
 ## Prerequisites

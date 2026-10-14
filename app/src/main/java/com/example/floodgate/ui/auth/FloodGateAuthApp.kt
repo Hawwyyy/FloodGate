@@ -28,7 +28,8 @@ private enum class AuthDestination {
 fun FloodGateAuthApp(
     onExit: () -> Unit,
     repository: AuthRepository = remember { FirebaseAuthRepository() },
-    recoveryModel: RecoveryViewModel = viewModel()
+    recoveryModel: RecoveryViewModel = viewModel(),
+    barrierRepository: com.example.floodgate.barrier.model.BarrierRepository? = null
 ) {
     val initialDestination = if (repository.currentUser != null) {
         AuthDestination.SUCCESS
@@ -145,6 +146,7 @@ fun FloodGateAuthApp(
         // Keep the saved destination name compatible with existing saved app state.
         AuthDestination.SUCCESS -> DashboardScreen(
             email = repository.currentUser?.email.orEmpty(),
+            barrierRepository = barrierRepository,
             onSignOutClick = {
                 repository.signOut()
                 signInError = null
